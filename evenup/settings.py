@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     'rest_framework',
     'customauth',
     'evenup_app',
@@ -68,8 +69,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'evenup',                      
-        'USER': 'corey',
-        'PASSWORD': 'bridget1',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': ''
     }
 }
