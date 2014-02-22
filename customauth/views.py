@@ -35,6 +35,8 @@ def create_user(request):
 			  serialized.init_data['email'],
 			  serialized.init_data['phone'],
 			  serialized.init_data['password'],
+			  serialized.init_data['first_name'],
+			  serialized.init_data['last_name'],
 		  )
 
 		  return Response(serialized.data, status=status.HTTP_201_CREATED)
