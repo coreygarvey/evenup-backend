@@ -15,6 +15,8 @@ User = get_user_model()
 class Account(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True, related_name='account')
+	stripe_customer_id = models.CharField(max_length=100)
+	stripe_recipient_id = models.CharField(max_length=100)
 
 	class Meta:
 		ordering = ('created',)
@@ -30,3 +32,31 @@ class Account(models.Model):
 		"""
 
 		super(Account, self).save(*args, **kwargs)
+
+transaction_types = (
+    ('deposit', 'deposit'),
+    ('withdrawal', 'withdrawal'),
+)
+transaction_statuses = (
+    ('pending', 'pending'),
+    ('accepted', 'accepted'),
+    ('failed', 'failed'),
+)
+class AccountTransaction(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	transaction_type = models.CharField(max_length=1, choices=transaction_types)
+	account = models.ForeignKey(Account, related_name='account-transaction')
+	amount = models.IntegerField()
+	transaction_status = models.CharField(max_length=1, choices=transaction_statuses)
+	stripe_transaction_id = models.CharField(max_length=100)
+
+
+	class Meta:
+		ordering = ('created',)
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(AccountTransaction, self).save(*args, **kwargs)
