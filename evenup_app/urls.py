@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'events', views.EventViewSet)
-router.register(r'users', views.UserViewSet)
+
 
 
 urlpatterns = patterns('',

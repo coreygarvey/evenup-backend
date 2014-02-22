@@ -1,13 +1,16 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 
+
+
 class MyUserManager(BaseUserManager):
-	def create_user(self, email, phone, password=None):
+	def create_user(self, email, phone, password):
 		"""
-		Creates and saves a User with the given email, date of
-		birth and password.
+		Creates and saves a User with the given email, phone and password.
 		"""
 		if not email:
 			raise ValueError('Users must have an email address')
@@ -16,7 +19,6 @@ class MyUserManager(BaseUserManager):
 			email=self.normalize_email(email),
 			phone=phone,
 		)
-
 		user.set_password(password)
 		user.save(using=self._db)
 		return user
@@ -77,3 +79,5 @@ class MyUser(AbstractBaseUser):
 		"Is the user a member of staff?"
 		# Simplest possible answer: All admins are staff
 		return self.is_admin
+
+
