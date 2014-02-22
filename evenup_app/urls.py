@@ -7,6 +7,7 @@ admin.autodiscover()
 
 router = DefaultRouter()
 router.register(r'events', views.EventViewSet)
+router.register(r'events', views.EventMemberViewSet)
 
 
 

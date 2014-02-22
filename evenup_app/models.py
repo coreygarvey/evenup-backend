@@ -41,3 +41,27 @@ class Event(models.Model):
 		"""
 
 		super(Event, self).save(*args, **kwargs)
+
+class EventMember(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_membership')
+	event = models.ForeignKey(Event, related_name='event_member')
+
+	class Meta:
+		ordering = ('created',)
+
+	def create_event_member(sender, instance, created, **kwargs):
+		if created:
+			EventMember.objects.create(event=instance, user=instance.owner)
+
+	post_save.connect(create_event_member, sender=Event)
+
+	
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(EventMember, self).save(*args, **kwargs)

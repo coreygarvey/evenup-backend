@@ -1,5 +1,7 @@
 from evenup_app.models import Event
+from evenup_app.models import EventMember
 from evenup_app.serializers import EventSerializer
+from evenup_app.serializers import EventMemberSerializer
 from evenup_app.serializers import UserSerializer
 from rest_framework import mixins
 from rest_framework import generics
@@ -34,3 +36,12 @@ class EventViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
+
+class EventMemberViewSet(viewsets.ModelViewSet):
+	queryset = EventMember.objects.all()
+	serializer_class = EventMemberSerializer
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+
+
+	def pre_save(self, obj):
+		obj.user = self.request.user
