@@ -1,7 +1,9 @@
 from django.forms import widgets
 from rest_framework import serializers
 from evenup_app.models import Event
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.Field(source='owner.username')
