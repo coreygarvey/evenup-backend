@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'customauth',
     'evenup_app',
+    'accounts',
     'south',
     'rest_framework.authtoken',
 )

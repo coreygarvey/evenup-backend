@@ -1,4 +1,5 @@
 from evenup_app.models import Event
+
 from evenup_app.serializers import EventSerializer
 from evenup_app.serializers import UserSerializer
 from rest_framework import mixins
@@ -38,7 +39,7 @@ def create_user(request):
 			  serialized.init_data['first_name'],
 			  serialized.init_data['last_name'],
 		  )
-
+		  
 		  return Response(serialized.data, status=status.HTTP_201_CREATED)
 	  else:
 		  return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)

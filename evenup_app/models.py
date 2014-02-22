@@ -22,13 +22,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 		Token.objects.create(user=instance)
 
 
-class Account(models.Model):
-	created = models.DateTimeField(auto_now_add=True)
-	stripe_customer_id = models.CharField(max_length=100, blank=True, default='')
-	stripe_recipient_id = models.CharField(max_length=100, blank=True, default='')
 
-	class Meta:
-		ordering = ('created',)
 
 class Event(models.Model):
 	created = models.DateTimeField(auto_now_add=True)

@@ -95,7 +95,8 @@ class MyUser(AbstractBaseUser):
 		return self.is_admin
 
 class UserProfile(models.Model):  
-	user = models.ForeignKey(MyUser, unique=True)
+	created = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(MyUser, related_name='user_profile')
 	#profile_picture = models.ImageField(upload_to='thumbpath', blank=True)
 
 	def __unicode__(self):

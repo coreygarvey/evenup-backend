@@ -10,4 +10,5 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^', include('evenup_app.urls')),
     url(r'^', include('customauth.urls')),
+    url(r'^', include('accounts.urls')),
 )
