@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+	BaseUserManager, AbstractBaseUser
 )
 
 
@@ -23,6 +23,8 @@ class MyUserManager(BaseUserManager):
 		)
 		user.set_password(password)
 		user.save(using=self._db)
+		user_profile = UserProfile.objects.create(user=user)
+		user_profile.save()
 		return user
 
 	def create_superuser(self, email, phone, first_name, last_name, password):
@@ -37,6 +39,8 @@ class MyUserManager(BaseUserManager):
 			)
 		user.is_admin = True
 		user.save(using=self._db)
+		user_profile = UserProfile.objects.create(user=user)
+		user_profile.save()
 		return user
 
 
@@ -90,4 +94,9 @@ class MyUser(AbstractBaseUser):
 		# Simplest possible answer: All admins are staff
 		return self.is_admin
 
+class UserProfile(models.Model):  
+	user = models.ForeignKey(MyUser, unique=True)
+	#profile_picture = models.ImageField(upload_to='thumbpath', blank=True)
 
+	def __unicode__(self):
+		return u'Profile of user: %s' % self.user.username
