@@ -8,5 +8,5 @@ urlpatterns = patterns('',
     # url(r'^$', 'evenup.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('evenup_app.urls')),
 )
