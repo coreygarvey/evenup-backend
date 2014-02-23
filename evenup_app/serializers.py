@@ -21,19 +21,20 @@ class BillSplitSerializer(serializers.HyperlinkedModelSerializer):
 
 class EventBillItemSerializer(serializers.HyperlinkedModelSerializer):
 	bill_item_splits = BillSplitSerializer(many=True, required=False)
+	purchaser = serializers.Field(source='purchaser.name')
 	class Meta:
 		model = EventBillItem
-		fields = ('id', 'cost', 'description', 'bill_item_splits')
+		fields = ('id', 'cost','description', 'bill_item_splits', 'purchaser')
 
 
 
 class EventMemberSerializer(serializers.HyperlinkedModelSerializer):
-	user = UserSerializer(many=False)
+	user = UserSerializer(many=False, required=False)
 	event_member_purchased_items = EventBillItemSerializer(many=True, required=False)
 	
 	class Meta:
 		model = EventMember
-		fields = ('id',  'user', 'event_member_purchased_items')
+		fields = ('id', 'user', 'phone', 'name', 'event_member_purchased_items')
 
 class EventBillSerializer(serializers.HyperlinkedModelSerializer):
 	event_bill_items = EventBillItemSerializer(many=True, required=False)

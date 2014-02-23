@@ -22,11 +22,18 @@ def api_root(request, format=None):
 		})
 
 class EventViewSet(viewsets.ModelViewSet):
-	queryset = Event.objects.all()
+	model = Event
 	serializer_class = EventSerializer
 	permission_classes = (IsEventMember,)
 
-	
+
+	def get_queryset(self):
+		"""
+		This view should return a list of all the purchases
+		for the currently authenticated user.
+		"""
+		user = self.request.user
+		return Event.objects.filter(event_members__user=user)
 	def pre_save(self, obj):
 		
 		obj.owner = self.request.user
@@ -36,10 +43,25 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	serializer_class = UserSerializer
 
 class EventMemberViewSet(viewsets.ModelViewSet):
-	queryset = EventMember.objects.all()
+	model = EventMember
 	serializer_class = EventMemberSerializer
 	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly,)
+	def get_queryset(self):
+		"""
+		This view should return a list of all the purchases
+		for the currently authenticated user.
+		"""
+		user = self.request.user
+		return EventMember.objects.filter(event=self.kwargs['event_pk'])
 
+	def pre_save(self, obj):
+		event = Event.objects.get(pk=self.kwargs['event_pk'])
+		obj.event = event
+		phone = obj.phone
+		print phone
+		user = User.objects.get(phone=phone)
+		if user:
+			obj.user = user
 
 
 
@@ -60,16 +82,18 @@ class EventBillItemViewSet(viewsets.ModelViewSet):
 		obj.bill = EventBill.objects.get(event=event)
 
 
-
 class BillSplitViewSet(viewsets.ModelViewSet):
 	queryset = BillSplit.objects.all()
 	serializer_class = BillSplitSerializer
-	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+	permission_classes = (IsSplitOwner,)
 
 
 	def pre_save(self, obj):
 		print 'great'
-		obj.owner = self.request.user
+		event_members=EventMember.objects.filter(event=self.kwargs['event_pk'])
+		for member in event_members.all():
+			if member.user == self.request.user:
+				obj.owner = member
 		item = EventBillItem.objects.get(pk=self.kwargs['billitem_pk'])
 		obj.item = item
 		obj.amount = (item.cost)/(item.bill_item_splits.all().count()+1)

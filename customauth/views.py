@@ -1,5 +1,5 @@
 from evenup_app.models import Event
-
+from evenup_app.models import EventMember
 from evenup_app.serializers import EventSerializer
 from evenup_app.serializers import UserSerializer
 from rest_framework import mixins
@@ -35,11 +35,21 @@ def create_user(request):
 		  created_user = User.objects.create_user(
 			  serialized.init_data['email'],
 			  serialized.init_data['phone'],
-			  serialized.init_data['password'],
 			  serialized.init_data['first_name'],
 			  serialized.init_data['last_name'],
+			  serialized.init_data['password'],
 		  )
-		  
+		  print created_user
+		  eventmembers=EventMember.objects.all()
+		  for member in eventmembers:
+		  	print member.phone
+		  	print 'middle'
+		  	print created_user.phone
+		  	if member.phone == created_user.phone:
+		  		print created_user
+		  		print member
+		  		member.user=created_user
+		  		member.save()
 		  return Response(serialized.data, status=status.HTTP_201_CREATED)
 	  else:
 		  return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)

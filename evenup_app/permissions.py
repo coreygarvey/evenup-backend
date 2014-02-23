@@ -67,6 +67,21 @@ class IsEventMember(permissions.BasePermission):
 			else:
 				return False
 
+class IsSplitOwner(permissions.BasePermission):
+	"""
+	Custom permission to only allow owners of an object to edit it.
+	"""
+	def has_object_permission(self, request, view, obj):
+		# Read permissions are allowed to any request,
+		# so we'll always allow GET, HEAD or OPTIONS requests.
+		user = request.user
+		split_owner = obj.owner
+		event_memberships = user.event_memberships.all()
+		for event_member in event_memberships:
+			if event_member == split_owner:
+
+				return True
+		return False
 
 
 class MyUserPermissions(permissions.BasePermission):

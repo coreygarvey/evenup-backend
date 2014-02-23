@@ -49,6 +49,7 @@ class EventMember(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_memberships', null=True)
 	event = models.ForeignKey(Event, related_name='event_members')
 	name = models.CharField(max_length=50, blank=True, null=True)
+	phone = models.CharField(max_length=50, blank=True, null=True)
 
 	class Meta:
 		ordering = ('created',)
@@ -56,9 +57,10 @@ class EventMember(models.Model):
 
 	def create_event_member(sender, instance, created, **kwargs):
 		user = instance.owner
+		phone = instance.owner.phone
 		name = user.first_name + ' ' + user.last_name
 		if created:
-			EventMember.objects.create(event=instance, user=user, name=name)
+			EventMember.objects.create(event=instance, user=user, name=name, phone=phone)
 
 	post_save.connect(create_event_member, sender=Event)
 
@@ -129,7 +131,7 @@ class BillSplit(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	item = models.ForeignKey(EventBillItem, related_name='bill_item_splits')
 	owner = models.ForeignKey(EventMember, related_name='user_bill_splits')
-	amount = models.IntegerField()
+	amount = models.IntegerField(null=True, blank=True)
 	
 
 	class Meta:

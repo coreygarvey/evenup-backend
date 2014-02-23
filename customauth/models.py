@@ -19,7 +19,8 @@ class MyUserManager(BaseUserManager):
 			email=self.normalize_email(email),
 			phone=phone,
 			first_name=first_name,
-			last_name=last_name
+			last_name=last_name,
+			password=password
 		)
 		user.set_password(password)
 		user.save(using=self._db)
