@@ -26,7 +26,7 @@ class EventViewSet(viewsets.ModelViewSet):
 	serializer_class = EventSerializer
 	permission_classes = (IsEventMember,)
 
-
+	
 	def pre_save(self, obj):
 		
 		obj.owner = self.request.user
