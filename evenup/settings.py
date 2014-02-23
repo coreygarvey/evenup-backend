@@ -40,8 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'rest_framework',
     'customauth',
-    'evenup_app',
-    'accounts',
     'south',
     'rest_framework.authtoken',
     'rest_framework_nested',
