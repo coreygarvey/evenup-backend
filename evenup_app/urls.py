@@ -12,6 +12,8 @@ router.register(r'events', views.EventMemberViewSet)
 
 events_router = routers.SimpleRouter()
 events_router.register(r'events', views.EventViewSet)
+eventmembers_router = routers.NestedSimpleRouter(events_router, r'events', lookup='event')
+eventmembers_router.register(r'eventmembers', views.EventMemberViewSet)
 billitems_router = routers.NestedSimpleRouter(events_router, r'events', lookup='event')
 billitems_router.register(r'billitems', views.EventBillItemViewSet)
 billsplit_router = routers.NestedSimpleRouter(billitems_router, r'billitems', lookup='billitem')
@@ -21,6 +23,7 @@ billsplit_router.register(r'billsplits', views.BillSplitViewSet)
 
 urlpatterns = patterns('',
 	url(r'^', include(router.urls)),
+	url(r'^', include(eventmembers_router.urls)),
 	url(r'^', include(billitems_router.urls)),
 	url(r'^', include(billsplit_router.urls)),
 	url(r'^api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token'),

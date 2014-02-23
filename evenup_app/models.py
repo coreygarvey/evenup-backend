@@ -118,7 +118,7 @@ class BillSplit(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	item = models.ForeignKey(EventBillItem, related_name='bill_item_splits')
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_bill_splits')
-	amount = models.IntegerField(null=True)
+	amount = models.IntegerField()
 	
 
 	class Meta:
@@ -136,3 +136,24 @@ class BillSplit(models.Model):
 		if created:
 			BillSplit.objects.create(item=instance, owner=instance.purchaser, amount=instance.cost)
 	post_save.connect(create_purchaser_split, sender=EventBillItem)
+
+class EventCharge(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	bill = models.ForeignKey(EventBill, related_name='event_charges', unique=True)
+	member = models.ForeignKey(EventMember, related_name='event_charges')
+	amount_due = models.IntegerField()
+	is_active = models.BooleanField(default=False)
+	paid_time = models.DateTimeField(null=True, blank=True)
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(EventCharge, self).save(*args, **kwargs)
+

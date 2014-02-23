@@ -30,7 +30,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 @api_view(['POST'])
 def create_user(request):
 
-	  serialized = UserSerializer(data=request.DATA)
+	  serialized = UserSerializer(context={'request': request},data=request.DATA)
 	  if serialized.is_valid():
 		  created_user = User.objects.create_user(
 			  serialized.init_data['email'],
