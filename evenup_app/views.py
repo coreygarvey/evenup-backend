@@ -1,7 +1,10 @@
 from evenup_app.models import Event
 from evenup_app.models import EventMember
+from evenup_app.models import EventBill
+from evenup_app.models import EventBillItem
 from evenup_app.serializers import EventSerializer
 from evenup_app.serializers import EventMemberSerializer
+from evenup_app.serializers import EventBillItemSerializer
 from evenup_app.serializers import UserSerializer
 from rest_framework import mixins
 from rest_framework import generics
@@ -45,3 +48,16 @@ class EventMemberViewSet(viewsets.ModelViewSet):
 
 	def pre_save(self, obj):
 		obj.user = self.request.user
+
+class EventBillItemViewSet(viewsets.ModelViewSet):
+	queryset = EventBillItem.objects.all()
+	serializer_class = EventBillItemSerializer
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+
+
+	def pre_save(self, obj):
+		obj.purchaser = self.request.user
+		event = Event.objects.get(pk=self.kwargs['event_pk'])
+		obj.bill = EventBill.objects.get(event=event)
+
+

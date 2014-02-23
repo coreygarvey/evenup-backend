@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'accounts',
     'south',
     'rest_framework.authtoken',
+    'rest_framework_nested',
 )
 AUTH_USER_MODEL = 'customauth.MyUser'
 

@@ -65,3 +65,48 @@ class EventMember(models.Model):
 		"""
 
 		super(EventMember, self).save(*args, **kwargs)
+
+class EventBill(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	event = models.ForeignKey(Event, related_name='event_bill')
+	amount_paid = models.IntegerField(null=True, blank=True)
+	amount_due = models.IntegerField(null=True, blank=True)
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def create_event_bill(sender, instance, created, **kwargs):
+		if created:
+			EventBill.objects.create(event=instance)
+
+	post_save.connect(create_event_bill, sender=Event)
+
+	
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(EventBill, self).save(*args, **kwargs)
+
+class EventBillItem(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	bill = models.ForeignKey(EventBill, related_name='event_bill_item')
+	purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_member_purchased_item')
+	cost = models.IntegerField()
+	description = models.CharField(max_length=100)
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(EventBillItem, self).save(*args, **kwargs)
