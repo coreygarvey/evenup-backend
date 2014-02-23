@@ -28,7 +28,7 @@ class IsUserOrReadOnly(permissions.BasePermission):
 
 		# Write permissions are only allowed to the owner
 
-		return obj.purchaser == request.user
+		return obj.user == request.user
 
 
 class IsPurchaserOrReadOnly(permissions.BasePermission):
