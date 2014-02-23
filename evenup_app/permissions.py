@@ -45,3 +45,41 @@ class IsPurchaserOrReadOnly(permissions.BasePermission):
 		# Write permissions are only allowed to the owner
 
 		return obj.purchaser == request.user
+
+class IsEventMember(permissions.BasePermission):
+	"""
+	Custom permission to only allow owners of an object to edit it.
+	"""
+
+	def has_object_permission(self, request, view, obj):
+		# Read permissions are allowed to any request,
+		# so we'll always allow GET, HEAD or OPTIONS requests.
+		user = request.user
+
+		for event_member in obj.event_members.all():
+			print event_member.user.email
+			print user
+			if event_member.user.email == user.email:
+				print True
+				return True
+
+			else:
+				return False
+
+
+
+class MyUserPermissions(permissions.BasePermission):
+    """
+    Handles permissions for users.  The basic rules are
+
+     - owner may GET, PUT, POST, DELETE
+     - nobody else can access
+     """
+
+    def has_object_permission(self, request, view, obj):
+
+        # check if user is owner
+        return request.user == obj
+
+
+

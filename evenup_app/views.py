@@ -24,10 +24,12 @@ def api_root(request, format=None):
 class EventViewSet(viewsets.ModelViewSet):
 	queryset = Event.objects.all()
 	serializer_class = EventSerializer
-	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+	permission_classes = (IsOwnerOrReadOnly, IsEventMember)
+	
 
 
 	def pre_save(self, obj):
+		
 		obj.owner = self.request.user
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -71,4 +73,12 @@ class BillSplitViewSet(viewsets.ModelViewSet):
 		for split in item.bill_item_splits.all():
 			split.amount = (item.cost)/(item.bill_item_splits.all().count()+1)
 			split.save()
+
+class EventChargeViewSet(viewsets.ModelViewSet):
+	queryset = EventCharge.objects.all()
+	serializer_class = EventChargeSerializer
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, MyUserPermissions,)
+
+
+
 

@@ -34,6 +34,8 @@ class Event(models.Model):
 	class Meta:
 		ordering = ('created',)
 
+	
+
 	def save(self, *args, **kwargs):
 		"""
 		Use the `pygments` library to create a highlighted HTML
@@ -44,8 +46,8 @@ class Event(models.Model):
 
 class EventMember(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_membership')
-	event = models.ForeignKey(Event, related_name='event_member')
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_memberships', null=True)
+	event = models.ForeignKey(Event, related_name='event_members')
 
 	class Meta:
 		ordering = ('created',)
