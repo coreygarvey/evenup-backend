@@ -45,11 +45,12 @@ INSTALLED_APPS = (
     'south',
     'rest_framework.authtoken',
     'rest_framework_nested',
+    'corsheaders',
 )
 AUTH_USER_MODEL = 'customauth.MyUser'
 
 
-
+CORS_ORIGIN_ALLOW_ALL = True
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +58,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'evenup.urls'

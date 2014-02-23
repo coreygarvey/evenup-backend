@@ -10,3 +10,4 @@ wsgiref==0.1.2
 South==0.8.3
 djangorestframework
 drf-nested-routers
+django-cors-headers
