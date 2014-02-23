@@ -132,3 +132,7 @@ class BillSplit(models.Model):
 
 		super(BillSplit, self).save(*args, **kwargs)
 
+	def create_purchaser_split(sender, instance, created, **kwargs):
+		if created:
+			BillSplit.objects.create(item=instance, owner=instance.purchaser, amount=instance.cost)
+	post_save.connect(create_purchaser_split, sender=EventBillItem)

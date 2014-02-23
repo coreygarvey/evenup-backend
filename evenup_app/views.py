@@ -55,6 +55,7 @@ class EventBillItemViewSet(viewsets.ModelViewSet):
 		obj.bill = EventBill.objects.get(event=event)
 
 
+
 class BillSplitViewSet(viewsets.ModelViewSet):
 	queryset = BillSplit.objects.all()
 	serializer_class = BillSplitSerializer
@@ -65,9 +66,9 @@ class BillSplitViewSet(viewsets.ModelViewSet):
 		obj.owner = self.request.user
 		item = EventBillItem.objects.get(pk=self.kwargs['billitem_pk'])
 		obj.item = item
-		obj.amount = (item.cost)/(item.bill_item_splits.all().count())
+		obj.amount = (item.cost)/(item.bill_item_splits.all().count()+1)
 		
 		for split in item.bill_item_splits.all():
-			split.amount = (item.cost)/(item.bill_item_splits.all().count())
+			split.amount = (item.cost)/(item.bill_item_splits.all().count()+1)
 			split.save()
 
