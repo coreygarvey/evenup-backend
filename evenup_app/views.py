@@ -37,7 +37,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class EventMemberViewSet(viewsets.ModelViewSet):
 	queryset = EventMember.objects.all()
 	serializer_class = EventMemberSerializer
-	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly,)
 
 
 	def pre_save(self, obj):
@@ -46,7 +46,7 @@ class EventMemberViewSet(viewsets.ModelViewSet):
 class EventBillItemViewSet(viewsets.ModelViewSet):
 	queryset = EventBillItem.objects.all()
 	serializer_class = EventBillItemSerializer
-	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsPurchaserOrReadOnly,)
 
 
 	def pre_save(self, obj):
