@@ -96,7 +96,7 @@ class MyUser(AbstractBaseUser):
 
 class UserProfile(models.Model):  
 	created = models.DateTimeField(auto_now_add=True)
-	user = models.ForeignKey(MyUser, related_name='user_profile')
+	user = models.ForeignKey(MyUser, related_name='user-profile')
 	#profile_picture = models.ImageField(upload_to='thumbpath', blank=True)
 
 	def __unicode__(self):

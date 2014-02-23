@@ -48,9 +48,11 @@ class EventMember(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_memberships', null=True)
 	event = models.ForeignKey(Event, related_name='event_members')
+	name = models.CharField(max_length=50, blank=True, null=True)
 
 	class Meta:
 		ordering = ('created',)
+
 
 	def create_event_member(sender, instance, created, **kwargs):
 		if created:
