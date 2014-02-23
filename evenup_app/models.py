@@ -84,6 +84,7 @@ class EventBill(models.Model):
 	event = models.OneToOneField(Event, related_name='event_bill')
 	amount_paid = models.IntegerField(null=True, blank=True)
 	amount_due = models.IntegerField(null=True, blank=True)
+
 	
 
 	class Meta:
@@ -113,6 +114,7 @@ class EventBillItem(models.Model):
 	purchaser = models.ForeignKey(EventMember, related_name='event_member_purchased_items')
 	cost = models.IntegerField()
 	description = models.CharField(max_length=100)
+	user_splitter = models.BooleanField(default=False)
 	
 
 	class Meta:

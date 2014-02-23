@@ -80,6 +80,10 @@ class EventBillItemViewSet(viewsets.ModelViewSet):
 				purchaser = member
 		obj.purchaser = purchaser
 		obj.bill = EventBill.objects.get(event=event)
+	
+
+
+
 
 
 class BillSplitViewSet(viewsets.ModelViewSet):
