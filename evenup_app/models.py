@@ -68,7 +68,7 @@ class EventMember(models.Model):
 
 class EventBill(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
-	event = models.ForeignKey(Event, related_name='event_bill')
+	event = models.OneToOneField(Event, related_name='event_bill')
 	amount_paid = models.IntegerField(null=True, blank=True)
 	amount_due = models.IntegerField(null=True, blank=True)
 	
@@ -92,10 +92,12 @@ class EventBill(models.Model):
 
 		super(EventBill, self).save(*args, **kwargs)
 
+
+
 class EventBillItem(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
-	bill = models.ForeignKey(EventBill, related_name='event_bill_item')
-	purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_member_purchased_item')
+	bill = models.ForeignKey(EventBill, related_name='event_bill_items', unique=True)
+	purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_member_purchased_items')
 	cost = models.IntegerField()
 	description = models.CharField(max_length=100)
 	
@@ -110,3 +112,23 @@ class EventBillItem(models.Model):
 		"""
 
 		super(EventBillItem, self).save(*args, **kwargs)
+
+
+class BillSplit(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	item = models.ForeignKey(EventBillItem, related_name='bill_item_splits')
+	owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_bill_splits')
+	amount = models.IntegerField(null=True)
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(BillSplit, self).save(*args, **kwargs)
+

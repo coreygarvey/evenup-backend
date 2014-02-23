@@ -1,8 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from evenup_app.models import Event
-from evenup_app.models import EventMember
-from evenup_app.models import EventBillItem
+from evenup_app.models import *
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -32,3 +30,10 @@ class EventBillItemSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EventBillItem
         fields = ('id', 'cost', 'description')
+
+class BillSplitSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.Field(source='owner.first_name')
+    item = serializers.Field(source='item.description')
+    class Meta:
+        model = BillSplit
+        fields = ('id', 'owner', 'item')

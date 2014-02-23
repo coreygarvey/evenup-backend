@@ -1,11 +1,5 @@
-from evenup_app.models import Event
-from evenup_app.models import EventMember
-from evenup_app.models import EventBill
-from evenup_app.models import EventBillItem
-from evenup_app.serializers import EventSerializer
-from evenup_app.serializers import EventMemberSerializer
-from evenup_app.serializers import EventBillItemSerializer
-from evenup_app.serializers import UserSerializer
+from evenup_app.models import *
+from evenup_app.serializers import *
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
@@ -60,4 +54,20 @@ class EventBillItemViewSet(viewsets.ModelViewSet):
 		event = Event.objects.get(pk=self.kwargs['event_pk'])
 		obj.bill = EventBill.objects.get(event=event)
 
+
+class BillSplitViewSet(viewsets.ModelViewSet):
+	queryset = BillSplit.objects.all()
+	serializer_class = BillSplitSerializer
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+
+
+	def pre_save(self, obj):
+		obj.owner = self.request.user
+		item = EventBillItem.objects.get(pk=self.kwargs['billitem_pk'])
+		obj.item = item
+		obj.amount = (item.cost)/(item.bill_item_splits.all().count())
+		
+		for split in item.bill_item_splits.all():
+			split.amount = (item.cost)/(item.bill_item_splits.all().count())
+			split.save()
 
