@@ -9,44 +9,46 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
 		model = User
-		field = ('id', 'username', 'events')
+		field = ('id', 'username', 'phone','events')
 
-class EventMemberSerializer(serializers.HyperlinkedModelSerializer):
-	user = UserSerializer(many=False)
-	phone = serializers.Field(source='user.phone')
-	class Meta:
-		model = EventMember
-		fields = ('id', 'phone', 'event', 'user')
-
-
-
-class EventSerializer(serializers.HyperlinkedModelSerializer):
-	owner = serializers.Field(source='owner.phone')
-	event_members = EventMemberSerializer(many=True, required=False)
-
-	class Meta:
-		model = Event
-		fields = ('id', 'owner', 'title', 'description', 'is_active', 'created', 'event_members')
-
-
-
-
-
-
-
-
-class EventBillItemSerializer(serializers.HyperlinkedModelSerializer):
-	purchaser = serializers.Field(source='purchaser.phone')
-	class Meta:
-		model = EventBillItem
-		fields = ('id', 'cost', 'description')
 
 class BillSplitSerializer(serializers.HyperlinkedModelSerializer):
-	owner = serializers.Field(source='owner.phone')
+	owner = serializers.Field(source='owner.name')
 	item = serializers.Field(source='item.description')
 	class Meta:
 		model = BillSplit
-		fields = ('id', 'owner', 'item')
+		fields = ('id', 'owner', 'item', 'amount')
+
+class EventBillItemSerializer(serializers.HyperlinkedModelSerializer):
+	bill_item_splits = BillSplitSerializer(many=True, required=False)
+	class Meta:
+		model = EventBillItem
+		fields = ('id', 'cost', 'description', 'bill_item_splits')
+
+
+
+class EventMemberSerializer(serializers.HyperlinkedModelSerializer):
+	user = UserSerializer(many=False)
+	event_member_purchased_items = EventBillItemSerializer(many=True, required=False)
+	
+	class Meta:
+		model = EventMember
+		fields = ('id',  'user', 'event_member_purchased_items')
+
+class EventBillSerializer(serializers.HyperlinkedModelSerializer):
+	event_bill_items = EventBillItemSerializer(many=True, required=False)
+	class Meta:
+		model = EventBill
+		fields = ('id', 'event_bill_items')
+
+class EventSerializer(serializers.HyperlinkedModelSerializer):
+	event_members = EventMemberSerializer(many=True, required=False)
+	event_bill = EventBillSerializer(many=False, required=False)
+	class Meta:
+		model = Event
+		fields = ('id', 'title', 'description', 'is_active', 'created', 'event_members', 'event_bill')
+
+
 
 class EventChargeSerializer(serializers.HyperlinkedModelSerializer):
 	member = serializers.Field(source='member.phone')

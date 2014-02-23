@@ -24,8 +24,7 @@ def api_root(request, format=None):
 class EventViewSet(viewsets.ModelViewSet):
 	queryset = Event.objects.all()
 	serializer_class = EventSerializer
-	permission_classes = (IsOwnerOrReadOnly, IsEventMember)
-	
+	permission_classes = (IsEventMember,)
 
 
 	def pre_save(self, obj):
@@ -42,8 +41,7 @@ class EventMemberViewSet(viewsets.ModelViewSet):
 	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly,)
 
 
-	def pre_save(self, obj):
-		obj.user = self.request.user
+
 
 class EventBillItemViewSet(viewsets.ModelViewSet):
 	queryset = EventBillItem.objects.all()
@@ -52,8 +50,13 @@ class EventBillItemViewSet(viewsets.ModelViewSet):
 
 
 	def pre_save(self, obj):
-		obj.purchaser = self.request.user
 		event = Event.objects.get(pk=self.kwargs['event_pk'])
+		user = self.request.user
+		event_members = event.event_members.all()
+		for member in event_members:
+			if member.user.email == user.email:
+				purchaser = member
+		obj.purchaser = purchaser
 		obj.bill = EventBill.objects.get(event=event)
 
 
@@ -65,6 +68,7 @@ class BillSplitViewSet(viewsets.ModelViewSet):
 
 
 	def pre_save(self, obj):
+		print 'great'
 		obj.owner = self.request.user
 		item = EventBillItem.objects.get(pk=self.kwargs['billitem_pk'])
 		obj.item = item
@@ -79,6 +83,9 @@ class EventChargeViewSet(viewsets.ModelViewSet):
 	serializer_class = EventChargeSerializer
 	permission_classes = (permissions.IsAuthenticatedOrReadOnly, MyUserPermissions,)
 
-
+class EventBillViewSet(viewsets.ModelViewSet):
+	queryset = EventBill.objects.all()
+	serializer_class = EventBillSerializer
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, MyUserPermissions,)
 
 

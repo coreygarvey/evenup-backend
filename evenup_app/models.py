@@ -28,7 +28,7 @@ class Event(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	title = models.CharField(max_length=50, blank=True, default='')
 	description = models.CharField(max_length=100, blank=True, default='')
-	is_active = models.BooleanField(default=False)
+	is_active = models.BooleanField(default=True)
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='events')
 
 	class Meta:
@@ -55,12 +55,19 @@ class EventMember(models.Model):
 
 
 	def create_event_member(sender, instance, created, **kwargs):
+		user = instance.owner
+		name = user.first_name + ' ' + user.last_name
 		if created:
-			EventMember.objects.create(event=instance, user=instance.owner)
+			EventMember.objects.create(event=instance, user=user, name=name)
 
 	post_save.connect(create_event_member, sender=Event)
 
-	
+
+	def total_owed(self):
+		total = 0
+		for item in self.event_member_purchased_items:
+			total += item.cost
+		return total
 
 	def save(self, *args, **kwargs):
 		"""
@@ -100,8 +107,8 @@ class EventBill(models.Model):
 
 class EventBillItem(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
-	bill = models.ForeignKey(EventBill, related_name='event_bill_items', unique=True)
-	purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='event_member_purchased_items')
+	bill = models.ForeignKey(EventBill, related_name='event_bill_items')
+	purchaser = models.ForeignKey(EventMember, related_name='event_member_purchased_items')
 	cost = models.IntegerField()
 	description = models.CharField(max_length=100)
 	
@@ -121,7 +128,7 @@ class EventBillItem(models.Model):
 class BillSplit(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	item = models.ForeignKey(EventBillItem, related_name='bill_item_splits')
-	owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_bill_splits')
+	owner = models.ForeignKey(EventMember, related_name='user_bill_splits')
 	amount = models.IntegerField()
 	
 
@@ -137,9 +144,14 @@ class BillSplit(models.Model):
 		super(BillSplit, self).save(*args, **kwargs)
 
 	def create_purchaser_split(sender, instance, created, **kwargs):
+		print instance
+		print instance.purchaser
+		print instance.cost
 		if created:
 			BillSplit.objects.create(item=instance, owner=instance.purchaser, amount=instance.cost)
 	post_save.connect(create_purchaser_split, sender=EventBillItem)
+
+
 
 class EventCharge(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
