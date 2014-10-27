@@ -8,5 +8,5 @@ router.register(r'accounts', views.AccountViewSet)
 
 urlpatterns = patterns('',
 	url(r'^', include(router.urls)),
+	url(r'^accounts/closed/$', views.StripeCharge.as_view())
 )
-

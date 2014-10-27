@@ -17,6 +17,8 @@ class Account(models.Model):
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True, related_name='account')
 	stripe_customer_id = models.CharField(max_length=100)
 	stripe_recipient_id = models.CharField(max_length=100)
+	amount_due=models.IntegerField(null=True,blank=True)
+	account_balance=models.IntegerField(null=True,blank=True)
 
 	class Meta:
 		ordering = ('created',)

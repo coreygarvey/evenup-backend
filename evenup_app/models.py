@@ -6,7 +6,7 @@ from django.contrib.auth.models import (
 	BaseUserManager, AbstractBaseUser
 )
 from django.conf import settings
-
+from accounts.models import Account
 from rest_framework.authtoken.models import Token
 # Create your models here.
 
@@ -35,6 +35,21 @@ class Event(models.Model):
 		ordering = ('created',)
 
 	
+	def create_charges_and_payables(self):
+		for member in self.event_members.all():
+			paid = 0
+			for item in member.event_member_purchased_items.all():
+				paid += item.cost
+			to_pay = 0
+			for split in member.user_bill_splits.all():
+				to_pay += split.amount
+			net = paid - to_pay
+			print net
+			if net >= 0:
+				EventPayable.objects.create(bill=self.event_bill, member=member, amount_paid=0,amount_owed=net)
+			if net < 0:
+				EventCharge.objects.create(bill=self.event_bill, member=member, amount_due=net, is_active=True)
+
 
 	def save(self, *args, **kwargs):
 		"""
@@ -61,6 +76,8 @@ class EventMember(models.Model):
 		name = user.first_name + ' ' + user.last_name
 		if created:
 			EventMember.objects.create(event=instance, user=user, name=name, phone=phone)
+
+
 
 	post_save.connect(create_event_member, sender=Event)
 
@@ -159,7 +176,7 @@ class BillSplit(models.Model):
 
 class EventCharge(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
-	bill = models.ForeignKey(EventBill, related_name='event_charges', unique=True)
+	bill = models.ForeignKey(EventBill, related_name='event_charges')
 	member = models.ForeignKey(EventMember, related_name='event_charges')
 	amount_due = models.IntegerField()
 	is_active = models.BooleanField(default=False)
@@ -177,3 +194,75 @@ class EventCharge(models.Model):
 
 		super(EventCharge, self).save(*args, **kwargs)
 
+class EventPayable(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	bill = models.ForeignKey(EventBill, related_name='event_payables')
+	member = models.ForeignKey(EventMember, related_name='event_payables')
+	amount_paid = models.IntegerField(null=True, blank=True)
+	amount_owed = models.IntegerField(null=True, blank=True)
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(EventPayable, self).save(*args, **kwargs)
+
+ea_transaction_types = (
+    ('charge', 'charge'),
+    ('payable', 'payable'),
+)
+
+class EventAccountTransaction(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	charge = models.ForeignKey(EventCharge, related_name='event_account_transaction_charges', unique=True, null=True)
+	payable = models.ForeignKey(EventPayable, related_name='event_account_transaction_payables', unique=True, null=True)
+	account = models.ForeignKey(Account, related_name='event_account_transaction')
+	ea_transaction_type = models.CharField(max_length=1, choices=ea_transaction_types)
+	amount = models.IntegerField()
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(EventAccountTransaction, self).save(*args, **kwargs)
+
+
+
+ea_transaction_types = (
+    ('charge', 'charge'),
+    ('payable', 'payable'),
+)
+
+
+class AccountTransaction(models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	account_transaction_type = models.DateTimeField(auto_now_add=True)
+	charge = models.ForeignKey(EventCharge, related_name='account_transaction_charges', unique=True, null=True)
+	payable = models.ForeignKey(EventPayable, related_name='account_transaction_payables', unique=True, null=True)
+	account = models.ForeignKey(Account, related_name='account_transaction')
+	ea_transaction_type = models.CharField(max_length=1, choices=ea_transaction_types)
+	amount = models.IntegerField()
+	
+
+	class Meta:
+		ordering = ('created',)
+
+	def save(self, *args, **kwargs):
+		"""
+		Use the `pygments` library to create a highlighted HTML
+		representation of the code snippet.
+		"""
+
+		super(AccountTransaction, self).save(*args, **kwargs)

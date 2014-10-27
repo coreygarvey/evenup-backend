@@ -13,6 +13,7 @@ router.register(r'events', views.EventMemberViewSet)
 simple_router = routers.SimpleRouter()
 simple_router.register(r'events', views.EventViewSet)
 
+
 eventbills_router = routers.NestedSimpleRouter(simple_router, r'events', lookup='event')
 eventbills_router.register(r'eventbills', views.EventBillViewSet)
 
@@ -37,5 +38,7 @@ urlpatterns = patterns('',
 	url(r'^', include(billsplit_router.urls)),
 	url(r'^api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token'),
 	url(r'^admin/', include(admin.site.urls)),
+	url(r'^events/(?P<event_pk>[0-9]+)/billitems/(?P<pk>[0-9]+)/billsplit_delete/$', views.DeleteBillSplit.as_view()),
+	url(r'^events/(?P<event_pk>[0-9]+)/closed/$', views.ChargesAndPayables.as_view())
 )
 

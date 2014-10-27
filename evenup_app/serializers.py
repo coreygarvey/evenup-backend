@@ -24,7 +24,7 @@ class EventBillItemSerializer(serializers.HyperlinkedModelSerializer):
 	purchaser = serializers.Field(source='purchaser.name')
 	class Meta:
 		model = EventBillItem
-		fields = ('id', 'cost','description', 'bill_item_splits', 'purchaser')
+		fields = ('id', 'cost','description', 'bill_item_splits', 'purchaser', 'user_splitter')
 
 
 
@@ -52,8 +52,13 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class EventChargeSerializer(serializers.HyperlinkedModelSerializer):
-	member = serializers.Field(source='member.phone')
-	bill = serializers.Field(source='bill.event.title')
+	member = serializers.Field(source='member.name')
 	class Meta:
 		model = EventCharge
-		fields = ('id', 'member', 'bill', 'amount_due', 'is_active', 'paid_time')
+		fields = ('id', 'member', 'amount_due', 'is_active')
+
+class EventPayableSerializer(serializers.HyperlinkedModelSerializer):
+	member = serializers.Field(source='member.phone')
+	class Meta:
+		model = EventPayable
+		fields = ('id', 'member', 'amount_owed')

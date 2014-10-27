@@ -8,7 +8,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 	def has_object_permission(self, request, view, obj):
 		# Read permissions are allowed to any request,
 		# so we'll always allow GET, HEAD or OPTIONS requests.
-		print 'hey'
+
 		if request.method in permissions.SAFE_METHODS:
 			return True
 
@@ -55,13 +55,10 @@ class IsEventMember(permissions.BasePermission):
 		# Read permissions are allowed to any request,
 		# so we'll always allow GET, HEAD or OPTIONS requests.
 		user = request.user
-		print 'hey'
 
 		for event_member in obj.event_members.all():
-			print event_member.user.email
-			print user
+
 			if event_member.user.email == user.email:
-				print True
 				return True
 
 			else:
